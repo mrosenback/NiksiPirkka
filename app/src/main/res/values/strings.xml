@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Share Your Best Advice</string>
+
+    <string-array name="category">
+        <item>Lifestyle</item>
+        <item>Technology</item>
+        <item>Miscellaneous</item>
+    </string-array>
+</resources>
