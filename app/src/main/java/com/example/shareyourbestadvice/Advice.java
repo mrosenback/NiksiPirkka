@@ -1,6 +1,8 @@
 package com.example.shareyourbestadvice;
 
-public class Advice {
+import java.io.Serializable;
+
+public class Advice implements Serializable {
 
     private String advice;
     private String author;

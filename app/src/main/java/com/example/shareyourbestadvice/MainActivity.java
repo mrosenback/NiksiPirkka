@@ -13,9 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                             category = intent.getStringExtra("category");
                             author = intent.getStringExtra("author");
                             advice = intent.getStringExtra("advice");
-                            model.addAdvices(new Advice(category, author, advice));
+                            model.addAdvices(new Advice(advice, author, category));
                             model.getAdvices().observe(MainActivity.this, advices ->
                                     adviceList = advices);
                             setAdapter();
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private void setAdapter() {
         RecyclerAdapter adapter = new RecyclerAdapter(adviceList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
