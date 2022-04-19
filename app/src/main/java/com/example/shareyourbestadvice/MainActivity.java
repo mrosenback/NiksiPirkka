@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             adviceList.add(new Advice(advice, author, category));
         }
         setAdapter();
+
     }
 
     public void openAddAdviceActivity() {
