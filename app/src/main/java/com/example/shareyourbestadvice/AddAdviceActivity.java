@@ -50,7 +50,12 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
             if (adviceInputString.length() == 0) {
                 adviceInput.setError("Enter advice");
             } else {
-                openMainActivity(categoryInputString, authorInputString, adviceInputString);
+                Intent intent = new Intent();
+                intent.putExtra("category", categoryInputString);
+                intent.putExtra("author", authorInputString);
+                intent.putExtra("advice", adviceInputString);
+                setResult(11, intent);
+                finish();
             }
         });
     }
