@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,9 +21,9 @@ import java.util.Objects;
 public class AddAdviceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     FloatingActionButton sendAdviceButton;
-    EditText authorInput;
     TextInputEditText adviceInput;
     Spinner categorySpinner;
+    TextView selectedAuthor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +31,14 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_add_advice);
 
         sendAdviceButton = findViewById(R.id.sendAdviceButton);
-        authorInput = findViewById(R.id.authorInput);
+        selectedAuthor = findViewById(R.id.selectedAuthor);
         adviceInput = findViewById(R.id.adviceInput);
         categorySpinner = findViewById(R.id.categorySpinner);
+
+        Intent intent = new Intent();
+        Bundle extras = getIntent().getExtras();
+        String author = extras.getString("AUTHOR");
+        selectedAuthor.setText(author);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -41,18 +47,12 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
 
         sendAdviceButton.setOnClickListener(view -> {
             String categoryInputString = categorySpinner.getSelectedItem().toString();
-            String authorInputString = authorInput.getText().toString();
             String adviceInputString = adviceInput.getText().toString();
 
-            if (authorInputString.length() == 0) {
-                authorInput.setError("Enter author");
-            }
             if (adviceInputString.length() == 0) {
                 adviceInput.setError("Enter advice");
             } else {
-                Intent intent = new Intent();
                 intent.putExtra("category", categoryInputString);
-                intent.putExtra("author", authorInputString);
                 intent.putExtra("advice", adviceInputString);
                 setResult(11, intent);
                 finish();
@@ -60,18 +60,9 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
-    public void openMainActivity(String categoryInput, String authorInput, String adviceInput) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("category", categoryInput);
-        intent.putExtra("author", authorInput);
-        intent.putExtra("advice", adviceInput);
-        startActivity(intent);
-    }
-
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-        String text = adapterView.getItemAtPosition(position).toString();
-        Toast.makeText(adapterView.getContext(), text, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

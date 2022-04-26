@@ -10,11 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyViewHolder> {
-    private ArrayList<Advice> adviceList;
+    private List<Advice> adviceList;
 
-    public RecyclerAdapter(ArrayList<Advice> adviceList) {
+    public RecyclerAdapter(List<Advice> adviceList) {
         this.adviceList = adviceList;
     }
 
@@ -40,9 +41,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerAdapter.MyViewHolder holder, int position) {
-        String advice = adviceList.get(position).getAdvice();
-        String author = adviceList.get(position).getAuthor();
-        String category = adviceList.get(position).getCategory();
+        String advice = adviceList.get(getItemCount() - position - 1).getAdvice();
+        String author = adviceList.get(getItemCount() - position - 1).getAuthor();
+        String category = adviceList.get(getItemCount() - position - 1).getCategory();
 
         holder.adviceText.setText(advice);
         holder.authorText.setText(author);

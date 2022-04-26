@@ -13,24 +13,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton addAdviceButton;
-    private ArrayList<Advice> adviceList = new ArrayList<>();
+    private List<Advice> adviceList = new ArrayList<>();
     MyViewModel model;
     private RecyclerView recyclerView;
 
+    EditText authorInput;
+    Spinner categorySpinner;
+
+    int id;
     String category;
     String author;
     String advice;
+
+    AdviceDao dao;
 
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -40,13 +51,22 @@ public class MainActivity extends AppCompatActivity {
                     if (result.getResultCode() == 11) {
                         Intent intent = result.getData();
                         if (intent != null) {
+                            id += 1;
                             category = intent.getStringExtra("category");
-                            author = intent.getStringExtra("author");
+                            author = authorInput.getText().toString();
                             advice = intent.getStringExtra("advice");
-                            model.addAdvices(new Advice(advice, author, category));
-                            model.getAdvices().observe(MainActivity.this, advices ->
-                                    adviceList = advices);
-                            setAdapter();
+                            //model.addAdvices(new Advice(id, advice, author, category));
+
+                            new Thread( () -> {
+                                dao.insert(new Advice(id, advice, author, category));
+                            }).start();
+
+                            /*model.getAdvices().observe(MainActivity.this, advices ->
+                                    adviceList = advices);*/
+                            dao.getAllAdvices().observe(MainActivity.this, advices -> {
+                                adviceList = advices;
+                                setAdapter();
+                            });
                         }
                     }
                 }
@@ -56,20 +76,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         recyclerView = findViewById(R.id.recyclerView);
+        authorInput = findViewById(R.id.authorInput);
+        categorySpinner = findViewById(R.id.categorySpinner);
 
         if (model == null) {
             model = new ViewModelProvider(this).get(MyViewModel.class);
         }
 
-        setAdapter();
+        dao = AdviceDatabase.getInstance(MainActivity.this).adviceDao();
+
+        new Thread( () -> {
+            dao.deleteAllAdvices();
+        }).start();
+
+        dao.getAllAdvices().observe(MainActivity.this, advices -> {
+            adviceList = advices;
+            setAdapter();
+        });
 
         addAdviceButton = findViewById(R.id.addAdviceButton);
 
         addAdviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String authorInputString = authorInput.getText().toString();
                 Intent intent = new Intent(MainActivity.this, AddAdviceActivity.class);
+                intent.putExtra("AUTHOR", authorInputString);
                 activityLauncher.launch(intent);
             }
         });
