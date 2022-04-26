@@ -38,12 +38,14 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
         Intent intent = new Intent();
         Bundle extras = getIntent().getExtras();
         String author = extras.getString("AUTHOR");
+        String category = extras.getString("CATEGORY");
         selectedAuthor.setText(author);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
         categorySpinner.setOnItemSelectedListener(this);
+        categorySpinner.setSelection(adapter.getPosition(category));
 
         sendAdviceButton.setOnClickListener(view -> {
             String categoryInputString = categorySpinner.getSelectedItem().toString();
@@ -52,8 +54,8 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
             if (adviceInputString.length() == 0) {
                 adviceInput.setError("Enter advice");
             } else {
-                intent.putExtra("category", categoryInputString);
-                intent.putExtra("advice", adviceInputString);
+                intent.putExtra("CATEGORY", categoryInputString);
+                intent.putExtra("ADVICE", adviceInputString);
                 setResult(11, intent);
                 finish();
             }

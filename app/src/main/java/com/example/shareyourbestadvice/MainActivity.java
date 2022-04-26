@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     FloatingActionButton addAdviceButton;
     private List<Advice> adviceList = new ArrayList<>();
@@ -52,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = result.getData();
                         if (intent != null) {
                             id += 1;
-                            category = intent.getStringExtra("category");
+                            category = intent.getStringExtra("CATEGORY");
                             author = authorInput.getText().toString();
-                            advice = intent.getStringExtra("advice");
+                            advice = intent.getStringExtra("ADVICE");
                             //model.addAdvices(new Advice(id, advice, author, category));
 
                             new Thread( () -> {
@@ -79,11 +80,16 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         authorInput = findViewById(R.id.authorInput);
-        categorySpinner = findViewById(R.id.categorySpinner);
+        categorySpinner = findViewById(R.id.categorySpinner2);
 
         if (model == null) {
             model = new ViewModelProvider(this).get(MyViewModel.class);
         }
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+        categorySpinner.setOnItemSelectedListener(this);
 
         dao = AdviceDatabase.getInstance(MainActivity.this).adviceDao();
 
@@ -102,8 +108,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String authorInputString = authorInput.getText().toString();
+                String categoryInputString = categorySpinner.getSelectedItem().toString();
                 Intent intent = new Intent(MainActivity.this, AddAdviceActivity.class);
                 intent.putExtra("AUTHOR", authorInputString);
+                intent.putExtra("CATEGORY", categoryInputString);
                 activityLauncher.launch(intent);
             }
         });
@@ -116,5 +124,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }
