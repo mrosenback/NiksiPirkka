@@ -3,6 +3,7 @@ package com.example.shareyourbestadvice;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.http.Field;
@@ -15,6 +16,9 @@ public interface DataService {
 
     @GET("getadvice")
     Call<List<Advice>> getAdviceData();
+
+    @GET("getcategories")
+    Call<List<Category>> getCategoryData();
 
     @POST("addadvice")
     @FormUrlEncoded

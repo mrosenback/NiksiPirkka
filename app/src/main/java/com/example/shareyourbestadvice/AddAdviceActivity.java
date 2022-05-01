@@ -16,6 +16,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AddAdviceActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -24,6 +26,7 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
     TextInputEditText adviceInput;
     Spinner categorySpinner;
     TextView selectedAuthor;
+    List<Category> categoryList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +41,16 @@ public class AddAdviceActivity extends AppCompatActivity implements AdapterView.
         Intent intent = new Intent();
         Bundle extras = getIntent().getExtras();
         String author = extras.getString("AUTHOR");
-        String category = extras.getString("CATEGORY");
+        int categoryPos = extras.getInt("CATEGORYPOS");
+        Bundle bundle = getIntent().getExtras();
+        categoryList = (List<Category>) bundle.getSerializable("CATEGORYLIST");
         selectedAuthor.setText(author);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.category, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter(AddAdviceActivity.this, android.R.layout.simple_spinner_item, categoryList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(adapter);
         categorySpinner.setOnItemSelectedListener(this);
-        categorySpinner.setSelection(adapter.getPosition(category));
+        categorySpinner.setSelection(categoryPos);
 
         sendAdviceButton.setOnClickListener(view -> {
             String categoryInputString = categorySpinner.getSelectedItem().toString();
